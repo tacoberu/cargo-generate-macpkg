@@ -1,0 +1,28 @@
+[package]
+name = "cargo-generate-macpkg"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+authors = ["Martin Takáč <tacoberu@gmail.com>"]
+description = "Generate a macOS installer package (.pkg) from Cargo projects"
+readme = "README.md"
+keywords = ["macos", "pkg", "package", "cargo", "subcommand"]
+categories = [
+    "command-line-utilities",
+    "development-tools::cargo-plugins",
+    "development-tools::build-utils",
+]
+exclude = ["examples/"]
+homepage = "https://github.com/tacoberu/cargo-generate-macpkg"
+repository = "https://github.com/tacoberu/cargo-generate-macpkg"
+
+[dependencies]
+cargo_metadata = "0.19"
+cargo_toml = "0.22"
+clap = { version = "4", features = ["derive"] }
+flate2 = "1"
+glob = "0.3"
+sha1 = "0.10"
+tempfile = "3"
+thiserror = "2"

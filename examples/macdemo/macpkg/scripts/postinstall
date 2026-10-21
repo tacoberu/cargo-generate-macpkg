@@ -1,0 +1,4 @@
+#!/bin/sh
+# Runs as root after the files are installed. $3 is the target volume.
+echo "macdemo installed" | logger -t macdemo
+exit 0

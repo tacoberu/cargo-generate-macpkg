@@ -4,11 +4,18 @@ cargo-generate-macpkg
 [**English**](README.md) | [Česky](README.cs.md)
 
 A Cargo helper command that generates a macOS installer package (`.pkg`) from a Cargo project.
-It needs no Xcode: the payload, the installer scripts and `PackageInfo` are written by the tool
-itself, and on Linux the bill of materials and the archive are made by `mkbom` and `xar`.
+It needs no Xcode and no other program: the payload, the installer scripts, the bill of materials (`Bom`), `PackageInfo` and the `xar` archive are all written by the tool itself, so it works the same on Linux and on macOS.
 Inspired by [cargo-generate-rpm](https://github.com/cat-in-136/cargo-generate-rpm).
 
 ## Installation
+
+From crates.io:
+
+```
+cargo install cargo-generate-macpkg
+```
+
+From a local checkout:
 
 ```
 cargo install --path .
@@ -31,12 +38,11 @@ directory or select the package with `-p NAME_OR_PATH`.
 
 How the package is put together (`--tool`):
 
-| Tool | Where | Needs |
-|---|---|---|
-| `pkgbuild` | macOS (the default there) | `pkgbuild` from the Command Line Tools |
-| `xar` | Linux (the default without `pkgbuild`) | `mkbom` from [bomutils](https://github.com/hogliux/bomutils) and `xar` (Fedora: `dnf install xar`) |
-
-Paths of the programs can be given with `--pkgbuild`, `--mkbom` and `--xar`.
+| Tool | Meaning |
+|---|---|
+| `auto` (default) | `pkgbuild` if it is found (macOS), otherwise the built-in writer |
+| `builtin` | the built-in writer; needs nothing else, output is reproducible (`SOURCE_DATE_EPOCH`) |
+| `pkgbuild` | Apple's `pkgbuild` (macOS only; path with `--pkgbuild`) |
 
 Cross-compiling the binaries from Linux works with
 [`cargo-zigbuild`](https://github.com/rust-cross/cargo-zigbuild) (`cargo install cargo-zigbuild`,
@@ -47,7 +53,7 @@ needs `zig`). The package is **not signed or notarized**; `productsign` and `not
 Settings live in the `[package.metadata.generate-macpkg]` table of `Cargo.toml`.
 
 | Option | Mandatory | Default |
-|---|---|---|
+|---|--|------|
 | `identifier` | **yes** | reverse-DNS identifier, e.g. `org.example.tool` |
 | `name` | no | `package.name` (file name of the package) |
 | `version` | no | `package.version` |
@@ -73,11 +79,6 @@ assets = [
 
 A working example is in [`examples/macdemo`](examples/macdemo).
 
-## Status
-
-The payload (`cpio` archive), the scripts archive, `PackageInfo` and the calls of `pkgbuild`, `mkbom`
-and `xar` are covered by tests (the programs themselves by stand-ins). A package put together
-by real `xar` and `mkbom`, and its installation on a Mac, have **not been verified**.
 
 ## License
 

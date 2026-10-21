@@ -4,11 +4,18 @@ cargo-generate-macpkg
 [English](README.md) | **Česky**
 
 Pomocný příkaz Cargo, který z Cargo projektu vytvoří instalační balíček pro macOS (`.pkg`).
-Nepotřebuje Xcode: obsah (`Payload`), instalační skripty a `PackageInfo` zapisuje nástroj sám,
-a na Linuxu seznam souborů (`Bom`) a archiv vytvoří `mkbom` a `xar`.
+Nepotřebuje Xcode ani žádný jiný program: obsah (`Payload`), instalační skripty, seznam souborů (`Bom`), `PackageInfo` i archiv `xar` zapisuje nástroj sám, takže funguje stejně na Linuxu i na macOS.
 Inspirováno [cargo-generate-rpm](https://github.com/cat-in-136/cargo-generate-rpm).
 
 ## Instalace
+
+Z crates.io:
+
+```
+cargo install cargo-generate-macpkg
+```
+
+Z lokálního checkoutu:
 
 ```
 cargo install --path .
@@ -31,12 +38,11 @@ vyber přepínačem `-p NAZEV_NEBO_CESTA`.
 
 Jak se balíček skládá (`--tool`):
 
-| Nástroj | Kde | Potřebuje |
-|---|---|---|
-| `pkgbuild` | macOS (tam výchozí) | `pkgbuild` z Command Line Tools |
-| `xar` | Linux (výchozí bez `pkgbuild`) | `mkbom` z [bomutils](https://github.com/hogliux/bomutils) a `xar` (Fedora: `dnf install xar`) |
-
-Cesty k programům jde zadat přepínači `--pkgbuild`, `--mkbom` a `--xar`.
+| Hodnota | Význam |
+|---|---|
+| `auto` (výchozí) | `pkgbuild`, je-li k nalezení (macOS), jinak vlastní zápis |
+| `builtin` | vlastní zápis; nepotřebuje nic dalšího, výstup je reprodukovatelný (`SOURCE_DATE_EPOCH`) |
+| `pkgbuild` | `pkgbuild` od Applu (jen macOS; cesta přepínačem `--pkgbuild`) |
 
 Binárky se dají z Linuxu přeložit přes [`cargo-zigbuild`](https://github.com/rust-cross/cargo-zigbuild)
 (`cargo install cargo-zigbuild`, vyžaduje `zig`). Balíček **není podepsaný ani notarizovaný**; to
@@ -47,7 +53,7 @@ udělají `productsign` a `notarytool` na Macu.
 Nastavení je v `Cargo.toml`, v tabulce `[package.metadata.generate-macpkg]`.
 
 | Volba | Povinná | Výchozí |
-|---|---|---|
+|---|--|-------|
 | `identifier` | **ano** | identifikátor ve tvaru reverzní domény, např. `org.example.tool` |
 | `name` | ne | `package.name` (název souboru balíčku) |
 | `version` | ne | `package.version` |
@@ -63,11 +69,6 @@ se vytvoří (`root:wheel`, `0755`); soubory patří `root:wheel`.
 
 Funkční příklad je v [`examples/macdemo`](examples/macdemo).
 
-## Stav
-
-Obsah (archiv `cpio`), archiv skriptů, `PackageInfo` a volání `pkgbuild`, `mkbom` a `xar` pokrývají
-testy (samotné programy zástupci). Balíček složený skutečnými `xar` a `mkbom` a jeho instalace na
-Macu **nejsou ověřené**.
 
 ## Licence
 

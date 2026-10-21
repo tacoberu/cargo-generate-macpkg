@@ -1,0 +1,19 @@
+[package]
+name = "macdemo"
+version = "0.1.0"
+edition = "2024"
+description = "Testovací program pro balíček macOS"
+authors = ["Martin Takáč"]
+
+[dependencies]
+
+[profile.release]
+strip = true
+
+[package.metadata.generate-macpkg]
+identifier = "org.example.macdemo"
+scripts = "macpkg/scripts"
+assets = [
+    { source = "target/release/macdemo", dest = "/usr/local/bin/macdemo", mode = "0755" },
+    { source = "README.md", dest = "/usr/local/share/doc/macdemo/" },
+]
